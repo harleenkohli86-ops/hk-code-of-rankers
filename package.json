@@ -37,6 +37,6 @@
   },
   "description": "HK Code of Rankers — CS mentorship platform (React + Express + PostgreSQL)",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   }
 }

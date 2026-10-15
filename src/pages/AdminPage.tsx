@@ -1,0 +1,16 @@
+import React,{useState} from 'react';
+import { PageId } from '../types';
+import { AdminProvider,useAdmin } from './admin/AdminContext';
+import { AdminLogin } from './admin/AdminLogin';
+import { AdminLayout } from '../components/admin/AdminLayout';
+import { DashboardHome } from './admin/DashboardHome';
+import { InquiriesSection } from './admin/InquiriesSection';
+import { AdminMentorshipManager } from '../components/admin/AdminMentorshipManager';
+import { RegisteredStudentsListTab } from '../components/admin/RegisteredStudentsListTab';
+import { FreeSlotBookingsTab } from '../components/admin/FreeSlotBookingsTab';
+import { PaymentApprovalsTab } from '../components/admin/PaymentApprovalsTab';
+import { BulkStudentsTab } from '../components/admin/BulkStudentsTab';
+import { setAdminViewingStudentId } from '../services/mentorshipTrackerService';
+
+const Content:React.FC<{onNavigate:(p:PageId)=>void}>=({onNavigate})=>{const admin=useAdmin(); const {session,sessionReady,centralStudents,loadCentralStudents,freeSlotBookings,isLoadingFreeSlots,activeSection,selectSection,loadFreeSlotBookings,approvingId,handleApproveCentralPayment}=admin; const [studentView,setStudentView]=useState<'records'|'bulk'>('records'); if(!sessionReady)return <div className="min-h-screen grid place-items-center bg-[#FAFAFA] text-sm text-gray-500">Loading admin portal…</div>; if(!session)return <AdminLogin/>; return <AdminLayout onNavigate={onNavigate}>{<>{activeSection==='overview'&&<DashboardHome/>}{activeSection==='mentorship'&&<AdminMentorshipManager onNavigate={onNavigate}/>} {activeSection==='students'&&<div className="space-y-4"><div className="flex flex-wrap items-center gap-2"><button onClick={()=>setStudentView('records')} className={`rounded-xl px-4 py-2 text-xs font-bold ${studentView==='records'?'bg-[#111] text-white':'bg-white border border-gray-200'}`}>Registered records</button><button onClick={()=>setStudentView('bulk')} className={`rounded-xl px-4 py-2 text-xs font-bold ${studentView==='bulk'?'bg-[#111] text-white':'bg-white border border-gray-200'}`}>Import / Export</button></div>{studentView==='records'?<RegisteredStudentsListTab students={centralStudents} onRefresh={()=>loadCentralStudents()} onOpenMentorshipChart={()=>selectSection('mentorship')} onOpenStudentPortal={(student)=>{setAdminViewingStudentId(student.studentId);onNavigate('student-portal')}}/>:<BulkStudentsTab onRefresh={()=>loadCentralStudents()}/>}</div>}{activeSection==='slots'&&<FreeSlotBookingsTab bookings={freeSlotBookings} onRefresh={loadFreeSlotBookings} isLoading={isLoadingFreeSlots}/>} {activeSection==='payments'&&<PaymentApprovalsTab students={centralStudents} approvingId={approvingId} onApprovePayment={handleApproveCentralPayment} onRejectPayment={(s)=>{const reason=window.prompt('Reason for rejection:','Payment UTR verification failed.');if(reason) import('../services/centralStudentDatabase').then(async m=>{const r=await m.rejectStudentPayment(s.studentId,reason); if(!r.success) alert(r.message);});}} onRefresh={loadCentralStudents}/>} {activeSection==='inquiries'&&<InquiriesSection/>}</>}</AdminLayout>};
+export const AdminPage:React.FC<{onNavigate:(p:PageId)=>void}>=({onNavigate})=><AdminProvider><Content onNavigate={onNavigate}/></AdminProvider>;

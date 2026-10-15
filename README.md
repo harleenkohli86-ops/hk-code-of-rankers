@@ -654,15 +654,3 @@ Production readiness depends on verifying the implemented functionality, configu
 **Database Provider:** Supabase or compatible PostgreSQL\
 **Deployment Target:** Node.js-compatible hosting\
 **Documentation:** Setup, features, database configuration, deployment, security, and maintenance
-
-## Before handing this to your client
-
-A few professional touches are worth completing before publishing the README:
-
-- Replace the example admin email, domain, and credentials with appropriate non-secret placeholders. Never publish real passwords.
-- Verify the actual `db/schema.sql`, `package.json`, and `.env.example` against the documentation so the commands and table names match the code.
-- Remove the administrator's personal phone number from public documentation unless it is genuinely required.
-- Add your client's logo, repository URL, support email, and production domain if available.
-- Keep deployment secrets in the hosting environment, not in the README.
-
-This version is written in professional English and is structured for a client-facing GitHub repository or project handover document.
